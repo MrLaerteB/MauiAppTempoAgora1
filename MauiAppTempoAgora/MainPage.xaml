@@ -8,7 +8,7 @@
             Padding="30,0"
             Spacing="25">
 
-            <Button Text="Minha Localização" Clicked="Button_Clicked_Localizacao" />
+            <Button Text="Minha Localização" Clicked="Button_Clicked_Localizacao" IsVisible="False" />
             <Label x:Name="lbl_coords" />
 
             <Entry x:Name="txt_cidade" />
@@ -22,3 +22,4 @@
     </ScrollView>
 
 </ContentPage>
+

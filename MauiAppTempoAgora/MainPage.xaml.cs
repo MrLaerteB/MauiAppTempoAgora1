@@ -2,6 +2,7 @@
 using MauiAppTempoAgora.Services;
 using System;
 using System.Diagnostics;
+using Microsoft.Maui.Networking; // Necessário para usar Connectivity
 
 namespace MauiAppTempoAgora
 {
@@ -14,22 +15,30 @@ namespace MauiAppTempoAgora
 
         private async void Button_Clicked_Previsao(object sender, EventArgs e)
         {
+            // VERIFICA SE TEM INTERNET
+            if (Connectivity.Current.NetworkAccess != NetworkAccess.Internet)
+            {
+                await DisplayAlert("Sem conexão", "Sem internet. Tente novamente.", "OK");
+                return;
+            }
+
             try
             {
-                if(!string.IsNullOrEmpty(txt_cidade.Text))
+                if (!string.IsNullOrEmpty(txt_cidade.Text))
                 {
                     Tempo? t = await DataService.GetPrevisao(txt_cidade.Text);
 
-                    if(t != null) 
+                    if (t != null)
                     {
-                        string dados_previsao = "";
-
-                        dados_previsao = $"Latitude: {t.lat} \n" +
-                                         $"Longitude: {t.lon} \n" +
-                                         $"Nascer do Sol: {t.sunrise} \n" +
-                                         $"Por do Sol: {t.sunset} \n" +
-                                         $"Temp Máx: {t.temp_max} \n" +
-                                         $"Temp Min: {t.temp_min} \n";
+                        string dados_previsao = $"Latitude: {t.lat} \n" +
+                                                $"Longitude: {t.lon} \n" +
+                                                $"Nascer do Sol: {t.sunrise} \n" +
+                                                $"Por do Sol: {t.sunset} \n" +
+                                                $"Temp Máx: {t.temp_max} \n" +
+                                                $"Temp Min: {t.temp_min} \n" +
+                                                $"Descrição: {t.description} \n" +
+                                                $"Velocidade do vento: {t.speed} \n" +
+                                                $"Visibilidade: {t.visibility} \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n ";
 
                         lbl_res.Text = dados_previsao;
 
@@ -37,23 +46,21 @@ namespace MauiAppTempoAgora
                                       $"type=map&location=coordinates&metricRain=mm&metricTemp=°C" +
                                       $"&metricWind=km/h&zoom=5&overlay=wind&product=ecmwf&level=surface" +
                                       $"&lat={t.lat.ToString().Replace(",", ".")}&lon={t.lon.ToString().Replace(",", ".")}";
-                        
+
                         wv_mapa.Source = mapa;
-
                         Debug.WriteLine(mapa);
-
-                    } else
-                    {
-
-                        lbl_res.Text = "Sem dados de Previsão";
                     }
-
-                } else
+                    else
+                    {
+                        lbl_res.Text = "Cidade não localizada \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n ";
+                    }
+                }
+                else
                 {
                     lbl_res.Text = "Preencha a cidade.";
                 }
-
-            } catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 await DisplayAlert("Ops", ex.Message, "OK");
             }
@@ -70,7 +77,7 @@ namespace MauiAppTempoAgora
 
                 Location? local = await Geolocation.Default.GetLocationAsync(request);
 
-                if(local != null)
+                if (local != null)
                 {
                     string local_disp = $"Latitude: {local.Latitude} \n" +
                                         $"Longitude: {local.Longitude}";
@@ -79,17 +86,17 @@ namespace MauiAppTempoAgora
 
                     // pega nome da cidade que está nas coordenadas.
                     GetCidade(local.Latitude, local.Longitude);
-
-                } else
+                }
+                else
                 {
                     lbl_coords.Text = "Nenhuma localização";
                 }
-            } 
-            catch(FeatureNotSupportedException fnsEx)
+            }
+            catch (FeatureNotSupportedException fnsEx)
             {
                 await DisplayAlert("Erro: Dispositivo não Suporta", fnsEx.Message, "OK");
-            } 
-            catch(FeatureNotEnabledException fneEx)
+            }
+            catch (FeatureNotEnabledException fneEx)
             {
                 await DisplayAlert("Erro: Localização Desabilitada", fneEx.Message, "OK");
             }
@@ -97,7 +104,7 @@ namespace MauiAppTempoAgora
             {
                 await DisplayAlert("Erro: Permissão da Localização", pEx.Message, "OK");
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 await DisplayAlert("Erro", ex.Message, "OK");
             }
@@ -108,14 +115,14 @@ namespace MauiAppTempoAgora
             try
             {
                 IEnumerable<Placemark> places = await Geocoding.Default.GetPlacemarksAsync(lat, lon);
-
                 Placemark? place = places.FirstOrDefault();
 
                 if (place != null)
                 {
                     txt_cidade.Text = place.Locality;
                 }
-            } catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 await DisplayAlert("Erro: Obtenção do nome da Cidade", ex.Message, "OK");
             }
