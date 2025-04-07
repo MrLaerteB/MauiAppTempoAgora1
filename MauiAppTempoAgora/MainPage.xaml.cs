@@ -38,7 +38,7 @@ namespace MauiAppTempoAgora
                                                 $"Temp Min: {t.temp_min} \n" +
                                                 $"Descrição: {t.description} \n" +
                                                 $"Velocidade do vento: {t.speed} \n" +
-                                                $"Visibilidade: {t.visibility} \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n ";
+                                                $"Visibilidade: {t.visibility} \n ";
 
                         lbl_res.Text = dados_previsao;
 
@@ -52,7 +52,7 @@ namespace MauiAppTempoAgora
                     }
                     else
                     {
-                        lbl_res.Text = "Cidade não localizada \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n \n ";
+                        lbl_res.Text = "Cidade não localizada \n ";
                     }
                 }
                 else
